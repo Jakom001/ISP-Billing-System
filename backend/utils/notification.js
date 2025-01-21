@@ -8,19 +8,20 @@ const sendEmailNotification = async (email, subject, message) => {
             service: 'gmail',
             auth: {
                 user: process.env.EMAIL,
-                pass: process.env.PASSWORD,
+                pass: process.env.EMAIL_PASSWORD,
             },
         });
 
         const mailOptions = {
             from: process.env.EMAIL,
-            to: user.email,
+            to: email,
             subject: subject,
             text: message,
         };
 
         await transporter.sendMail(mailOptions);
         console.log(`Email sent to ${email} successfully`);
+        return true;
     }catch(error){
         console.error("Error sending email:", error.message);
     }

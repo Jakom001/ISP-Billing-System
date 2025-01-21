@@ -1,19 +1,21 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import AddPackage from './componnets/AddPackage'
-import PackagesList from './componnets/PackagesList'
-import UsersList from './componnets/UsersList'
-import AddPayment from "./componnets/AddPayment"
+import AddPackage from './componets/AddPackage'
+import PackagesList from './componets/PackagesList'
+import UsersList from './componets/UsersList'
+import AddPayment from "./componets/AddPayment"
 import { UserContextProvider } from './context/UserContext'
-import AddUser from './componnets/AddUser.jsx'
-import UpdatePackage from './componnets/UpdatePackage'
-import UpdateUser from './componnets/UpdateUser'
-import PaymentsList from './componnets/PaymentsList'
+import AddUser from './componets/AddUser'
+import UpdatePackage from './componets/UpdatePackage'
+import UpdateUser from './componets/UpdateUser'
+import PaymentsList from './componets/PaymentsList'
 import { PaymentContextProvider } from './context/PaymentContext'
 import { PackageContextProvider } from './context/packageContext'
-import UpdatePayment from './componnets/UpdatePayment'
-import Navbar from './componnets/Navbar.jsx'
-import Dashboard from './componnets/Dashboard.jsx'
+import UpdatePayment from './componets/UpdatePayment'
+import Navbar from './componets/Navbar'
+import Dashboard from './componets/Dashboard'
+import Login from './componets/Login'
+import Register from './componets/Register'
 const App = () => {
   return (
     <Router>
@@ -21,6 +23,10 @@ const App = () => {
         <Navbar />
 
         <Routes>
+
+          {/* Authentication */}
+          <Route path="/login" element={<Login/>}/>
+          <Route path="/register" element={<Register/>}/>
         {/* Packages */}
         <Route path="/packages" element={<PackageContextProvider><PackagesList /></PackageContextProvider>} />
         <Route path="/packages/add" element={<PackageContextProvider><AddPackage /></PackageContextProvider>} />
