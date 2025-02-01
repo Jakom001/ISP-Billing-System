@@ -27,8 +27,6 @@ const sendEmailNotification = async (email, subject, message) => {
     }
 }
 
-
-
 // const sendSMSNotification = async (user, message) => {
 //   const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
 

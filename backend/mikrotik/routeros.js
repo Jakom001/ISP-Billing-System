@@ -2,7 +2,6 @@ require('dotenv').config()
 const RouterOSAPI = require('node-routeros').RouterOSAPI;
 require('dotenv').config()
 
-
 async function getPPPoEUsers(){
     const conn = new RouterOSAPI({
         host: process.env.MIKROTIK_HOST,

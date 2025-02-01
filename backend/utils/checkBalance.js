@@ -96,7 +96,7 @@ const checkAndDeductUserBalance = async () => {
 };
 
 // 
-const checkBalanceJob = cron.schedule('59 23 * * *', async () => {
+const checkBalanceJob = cron.schedule('54 23 * * *', async () => {
     try {
         console.log('Running disconnection job...');
         await checkAndDeductUserBalance();

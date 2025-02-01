@@ -4,6 +4,7 @@ import { updateUser, getUserById } from "../api/userApi";
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { usePackageContext } from "../context/packageContext";
+import ChangeExpiry from "./ChangeExpiry";
 
 const UpdateUser = () => {
   const { fetchUsers } = useUserContext();
@@ -34,7 +35,6 @@ const UpdateUser = () => {
       try {
         const response = await getUserById(id);
         const userData = response.data.data;
-        console.log(userData)
         setFormData({
           type: userData.type || "",
           firstName: userData.firstName || "",
@@ -232,12 +232,17 @@ const UpdateUser = () => {
   }
 
   return (
+    
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+      
       <div className="max-w-3xl mx-auto">
         <div className="bg-white text-blackColor shadow-md rounded-lg px-8 py-6">
+          <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Update User
+            Update User  
           </h2>
+          <ChangeExpiry userId={id} />
+          </div>
           {submitted && (
             <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-md">
               User updated successfully!

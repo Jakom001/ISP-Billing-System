@@ -12,7 +12,7 @@ router.delete('/delete-user/:id', userController.deleteUser)
 
 router.get('/single-user/:id', userController.getUserById)
 
-router.post('/changeExpiryDate/:id', userController.changeExpiryDate)
+router.post('/change-expiry-date/:id', userController.changeExpiryDate)
 
 
 module.exports = router

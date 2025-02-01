@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import {loginUser} from "../api/authApi"
-const Login = () => {
+import { useNavigate } from 'react-router-dom'
 
+const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -47,15 +49,14 @@ const Login = () => {
     if(validateForm()){
       try{
         await loginUser(formData);
-        
         setSubmitted(true)
-
+        navigate("/");
         // Reset Form
         setFormData({
           email:"",
           password: "",
         })
-        setTimeout(() =>setSubmitted(false), 3000)
+        setTimeout(() => setSubmitted(false), 3000)
       }catch (error){
         console.error("Submission Error", error)
          const backendError =

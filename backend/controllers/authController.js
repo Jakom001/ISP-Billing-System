@@ -69,7 +69,7 @@ const login = async (req, res) => {
         res.cookie('token', token, {
             secure: false, // Use true in production (with HTTPS)
             httpOnly: true,
-            maxAge: 60 * 60 * 1000, // 1 hour
+            maxAge: 24* 60 * 60 * 1000, // 24 hour
             sameSite: 'lax', 
         });
         res.status(200).json({message:"login successfull", user: user.firstName})
@@ -84,5 +84,12 @@ const logout = (req, res) => {
     res.redirect('/');
     res.status(200).json({message: 'Logged out'})
 }
+const currentUser = (req, res) => {
+    if (res.locals.user) {
+        res.json({ user: res.locals.user });
+    } else {
+        res.json({ user: null });
+    }
+};
 
-module.exports = {register, login, logout}
+module.exports = {register, login, logout, currentUser}

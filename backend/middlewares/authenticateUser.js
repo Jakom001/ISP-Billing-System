@@ -9,16 +9,15 @@ const isAuthenticated = (req, res, next) => {
         req.user = decoded;
         next();
        }else{
-        res.status(401).json({message:  "Unauthorized acces"});
-        return res.redirect('/login')
+        console.log("Unauthorized access");
+       return res.status(401).json({ success:false, message:  "Unauthorized acces"});
        }
        
 
         }catch (err){
-            console.error(err);
+            console.error("Error in authentication", err);
             res.clearCookie('token');
             res.status(500).json({ message: "Invalid or Expired Token", error: err.message });
-        return res.redirect('/login?redirect=' + encodeURIComponent(req.originalUrl));
         }
 }
 
@@ -32,9 +31,7 @@ const checkUser = (req, res, next) => {
                 next();
             } else {
                 let user = await Auth.findById(decodedToken.userId).select("-password");
-                if (!user) {
-                    return res.status(404).json({ message:"user not found"});
-                }
+                
                 res.locals.user = user;
                 next();
             }

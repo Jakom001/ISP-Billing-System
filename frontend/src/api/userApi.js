@@ -14,3 +14,7 @@ export const deleteUser = (userId) => apiClient.delete(`/users/delete-user/${use
 
 export const getUserById = (userId) => apiClient.get(`/users/single-user/${userId}`);
 
+// Change expiry date of a user by id
+export const changeExpiryDate = (userId, expiryDate) =>
+  apiClient.post(`/users/change-expiry-date/${userId}`, { expiryDate });
+

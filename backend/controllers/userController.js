@@ -307,8 +307,8 @@ const deleteUser = async (req, res) =>{
     }
 };
 
-const changeExpiryDate = async (res, req) =>{
-    const { connectionExpiryDate, id} = req.body;
+const changeExpiryDate = async (req, res) =>{
+    const {connectionExpiryDate} = req.body;
 
     try{
         const {error, value} = checkConnectionExpiryDate.validate({connectionExpiryDate});

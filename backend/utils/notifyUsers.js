@@ -9,30 +9,57 @@ const capitalizeFirstLetter = (string) => {
 };
 
 const notifyUsers = async () => {
-  const subject = "Wifi Subscription Expiry Reminder";
+  const subject = "Internet Subscription Expiry Reminder";
   try {
     // Get today's date (start of day)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    // Get date 5 days from now (end of day)
-    const fiveDaysFromNow = new Date(today);
-    fiveDaysFromNow.setDate(fiveDaysFromNow.getDate() + 5);
-    fiveDaysFromNow.setHours(23, 59, 59, 999);
+    // Create date objects for start and end of today
+    const startOfToday = new Date(today);
+    const endOfToday = new Date(today);
+    endOfToday.setHours(23, 59, 59, 999);
 
-    // Find users whose expiry date is either today or exactly 5 days from now
+    // Create date objects for 2 days from now
+    const startOfTwoDays = new Date(today);
+    startOfTwoDays.setDate(today.getDate() + 2);
+    startOfTwoDays.setHours(0, 0, 0, 0);
+    
+    const endOfTwoDays = new Date(startOfTwoDays);
+    endOfTwoDays.setHours(23, 59, 59, 999);
+
+    // Create date objects for 5 days from now
+    const startOfFiveDays = new Date(today);
+    startOfFiveDays.setDate(today.getDate() + 5);
+    startOfFiveDays.setHours(0, 0, 0, 0);
+    
+    const endOfFiveDays = new Date(startOfFiveDays);
+    endOfFiveDays.setHours(23, 59, 59, 999);
+
+   
+
+    // Find users whose expiry date matches any of our notification periods
     const users = await User.find({
       $or: [
         {
+          // Today
           connectionExpiryDate: {
-            $gte: today,
-            $lte: new Date(today.setHours(23, 59, 59, 999))
+            $gte: startOfToday,
+            $lte: endOfToday
           }
         },
         {
+          // 2 days from now
           connectionExpiryDate: {
-            $gte: new Date(fiveDaysFromNow.setHours(0, 0, 0, 0)),
-            $lte: fiveDaysFromNow
+            $gte: startOfTwoDays,
+            $lte: endOfTwoDays
+          }
+        },
+        {
+          // 5 days from now
+          connectionExpiryDate: {
+            $gte: startOfFiveDays,
+            $lte: endOfFiveDays
           }
         }
       ]
@@ -40,24 +67,31 @@ const notifyUsers = async () => {
       path: "package",
       select: "packageName price"
     });
+
+    console.log(`Found ${users.length} users to process`);
+
     for (const user of users) {
       const packagePrice = user.package.price;
 
       // Only proceed if user has insufficient balance
       if (user.balance < packagePrice) {
-        const daysRemaining = Math.ceil(
-          (new Date(user.connectionExpiryDate) - today) / (1000 * 60 * 60 * 24)
-        );
+        const expiryDate = new Date(user.connectionExpiryDate);
+        expiryDate.setHours(0, 0, 0, 0); // Normalize expiry date to the start of the day
+
+        const daysRemaining = (expiryDate - today) / (1000 * 60 * 60 * 24); // Get the difference in days
+
+
+        console.log(`Processing user ${user.username} with expiry in ${daysRemaining} days`);
 
         // Capitalize the first name
         const capitalizedFirstName = capitalizeFirstLetter(user.firstName);
 
-        // Construct the expiry message based on whether it expires today or in 5 days
+        // Construct the expiry message based on days remaining
         const expiryText = daysRemaining === 0 
-          ? "expires today"
+          ? `expires today ${user.connectionExpiryDate.toDateString()}`
           : `expires in ${daysRemaining} days on ${user.connectionExpiryDate.toDateString()}`;
 
-        const message = `Dear ${capitalizedFirstName}, your ${
+        const message = `Dear ${capitalizedFirstName}, </br> Your ${
           user.package.packageName
         } internet package subscription ${expiryText} at 11:59pm. Please top up Ksh ${
           user.package.price - user.balance
@@ -73,27 +107,19 @@ const notifyUsers = async () => {
               try {
                 await sendEmailNotification(user.email, subject, message);
                 notificationSent = true;
+                console.log(`Email sent successfully to ${user.email}`);
               } catch (emailError) {
                 console.error(`Failed to send email to ${user.email}:`, emailError.message);
-                // Don't set notificationSent to true if email fails
               }
             } else {
               console.log(`${user.username} has no email, skipping email notification.`);
             }
 
-            // Send SMS (when implemented)
-            // try {
-            //   await sendSMSNotification(user, message);
-            //   notificationSent = true;
-            // } catch (smsError) {
-            //   console.error(`Failed to send SMS to ${user.phone}:`, smsError.message);
-            // }
-
             // Only update lastReminderSent if at least one notification was sent successfully
             if (notificationSent) {
               user.lastReminderSent = today;
               await user.save();
-              console.log(`Updated lastReminderSent for user ${user.username}`);
+              console.log(`Updated lastReminderSent for user ${user.username}. Days remaining: ${daysRemaining}`);
             } else {
               console.log(`No notifications were sent successfully for user ${user.username}`);
             }
@@ -107,9 +133,10 @@ const notifyUsers = async () => {
     console.error("Error sending notifications:", error.message);
   }
 };
+
 // Schedule job to run daily at 8 AM
 const notificationJob = cron.schedule(
-  "53 13 * * *",
+  "42 16 * * *",
   async () => {
     try {
       console.log("Running notification job...");
