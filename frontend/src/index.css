@@ -1,7 +1,26 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-body{
-    @apply bg-blackColor text-white
+@theme{
+    --color-primary: hsl(171, 34%, 33%);
+    --color-primary-light: hsl(171, 34%, 55%);
+    --color-secondary: hsl(40, 35%, 55%);
+    --color-secondary-light: hsl(40, 35%, 70%);
+    --color-grayColor: #E7E6E6;
 }
+.custom-scrollbar::-webkit-scrollbar {
+    width: 7px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #387269;
+    border-radius: 8px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #2563eb; /* blue-600 on hover */
+  }
+  
